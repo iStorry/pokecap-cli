@@ -1,0 +1,27 @@
+{
+  "name": "pokecap",
+  "description": "A twitch bot which automatically catch pokemon when appears in the chat. ",
+  "main": "./src/index.js",
+  "bin": "./src/index.js",
+  "version": "0.0.1",
+  "author": "Jatinjit Singh",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "nodemon src/index.js"
+  },
+  "pkg": {
+    "scripts": "src/**/*.js",
+    "assets": "src/**/*.json",
+    "targets": [
+      "node16-macos-x64",
+      "node16-win-x64"
+    ],
+    "outputPath": "dist"
+  },
+  "dependencies": {
+    "axios": "^0.24.0",
+    "tmi.js": "^1.8.5",
+    "winston": "^3.3.3"
+  }
+}
