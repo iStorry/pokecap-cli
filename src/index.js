@@ -2,13 +2,15 @@ const axios = require('axios');
 const logger = require('./utils/logger');
 const api = require('./utils/api');
 const tmi = require('tmi.js');
-
-logger.info(`Starting Application`);
+const { pokeballs } = require('./utils/balls');
 
 (async() => {
+
     const user = process.argv[2];
     const channel = process.argv[3];
     const token = process.argv[4];
+
+    logger.info(`Starting application...`);
 
     if (!user || !channel || !token)
         return logger.error(`Failed to start application. Please provide a valid arguments.`);
@@ -48,6 +50,23 @@ logger.info(`Starting Application`);
         return new Promise((resolve) => setTimeout(resolve, time));
     }
 
+    let say = "!pokecatch";
+
+    if (process.argv.find(x => x === "--ball")) {
+        const index = process.argv.findIndex(x => x === "--ball");
+        let requested_ball = undefined;
+        if (process.argv[index + 1] !== undefined)
+            requested_ball = process.argv[index + 1];
+        const ball = pokeballs.list.find(x => x === requested_ball);
+
+        if (ball === undefined) {
+            logger.warn(`No ball found with the given name. Using default ball.`);
+        } else {
+            logger.info(`Using ${ball} ball.`);
+            say += ` ${ball} ball`;
+        }
+    };
+
     // Called every time a message comes in
     function onMessageHandler (target, context, msg, self) {
         if (self) { return; } // Ignore messages from the bot
@@ -55,10 +74,11 @@ logger.info(`Starting Application`);
         const re = new RegExp('(?<=TwitchLit A wild) (.*) (?=appears TwitchLit Catch it using !pokecatch)');
         const re2 = new RegExp('(?<=has been caught by:) (.*)');
         const pokematch = msg.match(re);
+
         if (pokematch) {
-            logger.debug(`[${target}] - A wild ${pokematch[1]} appeared!`);
+            logger.pokemon(logger, `[${target}] - A wild ${pokematch[1]} appeared!`);
             sleep(Math.round(Math.random() * 10000)).then(() => {
-                client.say(target, `!pokecatch`);
+                client.say(target, say);
                 logger.info(`[${target}] - message sent.`);
             });
         }
@@ -66,14 +86,14 @@ logger.info(`Starting Application`);
         const pokecaught = msg.match(re2);
         if (pokecaught) {
             if (pokecaught[1].match(user)) {
-                logger.debug(`[${target}] - Pokemon Caught.`);
+                logger.pokemon(logger, `[${target}] - Pokemon Caught.`);
             } else {
-                logger.error(`[${target}] - Pokemon Escaped.`);
+                logger.pokemon(logger, `[${target}] - Pokemon Escaped.`);
             }
         }
 
         if (process.argv.find(x => x === "--chat")) {
-            logger.info(`[${target}] - ${msg}`);
+            logger.debug(`[${target}] - ${msg}`);
         }
     }
 
