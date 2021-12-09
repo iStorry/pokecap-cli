@@ -19,8 +19,8 @@ pokecap istorry evil_gamer_tv av6j9uivxgxg9gvxxxxl4lzcnt29xx
 ```
 
 ### Flags?
-> `--chat` This will output chat into terminal as well. 
-> `--ball type ` This will switch the ball. Example : `--ball premier`
+- > `--chat` This will output chat into terminal as well. 
+- > `--ball type ` This will switch the ball. Example : `--ball premier`
 
 
 
